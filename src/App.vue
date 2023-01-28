@@ -21,28 +21,34 @@
             <div
               class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
             >
-              <span v-on:click="setTicker($event)"
-                    class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+              <span
+                v-on:click="setTicker($event)"
+                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 BTC
               </span>
-              <span v-on:click="setTicker($event)"
+              <span
+                v-on:click="setTicker($event)"
                 class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 DOGE
               </span>
-              <span v-on:click="setTicker($event)"
+              <span
+                v-on:click="setTicker($event)"
                 class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 BCH
               </span>
-              <span v-on:click="setTicker($event)"
+              <span
+                v-on:click="setTicker($event)"
                 class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 CHD
               </span>
             </div>
-            <div v-if="present" class="text-sm text-red-600"> Такой тикер уже добавлен</div>
+            <div v-if="present" class="text-sm text-red-600">
+              Такой тикер уже добавлен
+            </div>
           </div>
         </div>
         <button
@@ -117,7 +123,7 @@
           <div
             v-for="(bar, idx) in normalizeGraph()"
             :key="idx"
-            :style="{ height: `${ bar }%`}"
+            :style="{ height: `${bar}%` }"
             class="bg-purple-800 border w-10"
           ></div>
         </div>
@@ -162,7 +168,7 @@ export default {
       tickers: [],
       sel: null,
       graph: [],
-      present: false
+      present: false,
     };
   },
   methods: {
@@ -174,9 +180,8 @@ export default {
 
       this.tickers.push(currentTicker);
       setInterval(async () => {
-        const f = await fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=05c13d43dfcf0261c04afbdfa6a9b0f20fa8c4c3a5e067f79be8f88f0b88e5fd`
-        );
+        const f = await fetch();
+        // `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=05c13d43dfcf0261c04afbdfa6a9b0f20fa8c4c3a5e067f79be8f88f0b88e5fd`
         const data = await f.json();
 
         this.tickers.find((t) => t.name === currentTicker.name).price =
@@ -191,7 +196,7 @@ export default {
     },
     select(ticker) {
       this.sel = ticker;
-      this.graph = []
+      this.graph = [];
     },
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter((t) => t !== tickerToRemove);
@@ -200,19 +205,20 @@ export default {
       const maxValue = Math.max(...this.graph);
       const minValue = Math.min(...this.graph);
       return this.graph.map(
-        price => 5 + ((price - minValue) * 95) / (maxValue - minValue));
+        (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue)
+      );
     },
     setTicker(tickerName) {
       this.ticker = tickerName.target.innerHTML;
-      if(this.tickers.find((t) => t.name === this.ticker)) {
+      if (this.tickers.find((t) => t.name === this.ticker)) {
         this.present = true;
       } else {
         this.present = false;
       }
-      console.log(this.present)
-    }
+      console.log(this.present);
+    },
   },
 };
 </script>
 
-<style src="./app.css"></style>
+<style></style>
