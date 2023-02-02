@@ -4,13 +4,28 @@
       <section>
         <div class="flex">
           <div class="max-w-xs">
-            <label for="wallet" class="block text-sm font-medium text-gray-700"
-              >Тикер</label
+            <label for="wallet" class="block text-sm font-medium text-gray-700">
+              Тикер
+            </label>
+            <div
+              class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
             >
+              <span
+                v-for="ticker in exampleTickers"
+                :key="ticker.id"
+                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                v-on:click="setTicker(ticker.name)"
+              >
+                {{ ticker.name }}
+              </span>
+            </div>
+
             <div class="mt-1 relative rounded-md shadow-md">
               <input
                 v-model="ticker"
                 v-on:keydown.enter="add"
+                v-on:input="checkTicker(ticker)"
+                v-on:change="hints()"
                 id="wallet"
                 type="text"
                 name="wallet"
@@ -18,36 +33,24 @@
                 placeholder="Например DOGE"
               />
             </div>
-            <div
-              class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
-            >
-              <span
-                v-on:click="setTicker($event)"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+
+            <div class="">
+              <div
+                class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
+                v-if="ticker !== ''"
               >
-                BTC
-              </span>
-              <span
-                v-on:click="setTicker($event)"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-              >
-                DOGE
-              </span>
-              <span
-                v-on:click="setTicker($event)"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-              >
-                BCH
-              </span>
-              <span
-                v-on:click="setTicker($event)"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-              >
-                CHD
-              </span>
+                <span
+                  v-for="item in apiTickers.splice(0, 4)"
+                  :key="item.id"
+                  @click="(ticker = item.Symbol), add()"
+                  class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                >
+                  {{ item.Symbol }}
+                </span>
+              </div>
             </div>
             <div v-if="present" class="text-sm text-red-600">
-              Такой тикер уже добавлен
+              Такой тикер уже добавлен {{ this.ticker }}
             </div>
           </div>
         </div>
@@ -166,10 +169,30 @@ export default {
     return {
       ticker: "",
       tickers: [],
+      exampleTickers: [
+        { name: "BTC", id: 1 },
+        { name: "DOGE", id: 2 },
+        { name: "BCH", id: 3 },
+        { name: "CHD", id: 4 },
+      ],
       sel: null,
       graph: [],
       present: false,
+      apiTickers: [],
+      hintsList: [],
     };
+  },
+  created() {
+    const apilistTickers =
+      "https://min-api.cryptocompare.com/data/all/coinlist?summary=true";
+
+    fetch(apilistTickers)
+      .then((response) => response.json())
+      .then((response) => {
+        for (let element in response.Data) {
+          this.apiTickers.push(response.Data[element]);
+        }
+      });
   },
   methods: {
     add() {
@@ -178,12 +201,21 @@ export default {
         price: "-",
       };
 
-      this.tickers.push(currentTicker);
-      setInterval(async () => {
-        const f = await fetch();
-        // `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=05c13d43dfcf0261c04afbdfa6a9b0f20fa8c4c3a5e067f79be8f88f0b88e5fd`
-        const data = await f.json();
+      this.checkTicker(this.ticker.toUpperCase());
 
+      if (this.present || this.ticker === "") {
+        return;
+      }
+
+      if (!this.apiTickers.includes(currentTicker)) {
+        this.tickers.push(currentTicker);
+      }
+
+      setInterval(async () => {
+        const f = await fetch(
+          `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=${process.env.VUE_APP_API_KEY}`
+        );
+        const data = await f.json();
         this.tickers.find((t) => t.name === currentTicker.name).price =
           data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
 
@@ -208,14 +240,34 @@ export default {
         (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue)
       );
     },
-    setTicker(tickerName) {
-      this.ticker = tickerName.target.innerHTML;
-      if (this.tickers.find((t) => t.name === this.ticker)) {
-        this.present = true;
-      } else {
-        this.present = false;
+    setTicker(ticker) {
+      this.ticker = ticker;
+    },
+
+    checkTicker(nameTicker) {
+      this.present = false;
+      this.tickers.find((item) =>
+        item.name === nameTicker
+          ? (this.present = true)
+          : (this.present = false)
+      );
+    },
+    hints() {
+      if (this.ticker) {
+        this.hintsList = [...this.filterItems(this.ticker, 4)];
       }
-      console.log(this.present);
+      if (!this.ticker) {
+        this.hintsList = [];
+      }
+    },
+    filterItems(query) {
+      return this.apiTickers
+        .filter(function (el) {
+          return el.Symbol.toLowerCase().indexOf(query.toLowerCase()) > -1;
+        })
+        .sort(function (elementA, elementB) {
+          return elementA.Symbol.length - elementB.Symbol.length;
+        });
     },
   },
 };
