@@ -1,5 +1,5 @@
 const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
   transpileDependencies: true,
-  lintOnSave: true, // отключение авто линт
+  lintOnSave: false, // отключение авто линт
 });
