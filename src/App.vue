@@ -454,9 +454,9 @@ export default {
 
     if (tickersData) {
       this.tickers = JSON.parse(tickersData);
-      this.tickers.forEach(ticker => {
-        subscribeToTicker(ticker.name, newPrice => 
-          this.updareTicker(ticker.name, newPrice) 
+      this.tickers.forEach((ticker) => {
+        subscribeToTicker(ticker.name, (newPrice) =>
+          this.updareTicker(ticker.name, newPrice)
         );
       });
     }
@@ -468,7 +468,7 @@ export default {
     updareTicker(tickerName, price) {
       this.tickers
         .filter((t) => t.name === tickerName)
-        .forEach(t => {
+        .forEach((t) => {
           if (t === this.selectedTicker) {
             this.graph.push(price);
           }
@@ -510,9 +510,9 @@ export default {
       this.tickers = [...this.tickers, currentTicker];
       this.filter = "";
       this.ticker = "";
-      subscribeToTicker(currentTicker.name, newPrice => 
-          this.updareTicker(currentTicker.name, newPrice) 
-        );
+      subscribeToTicker(currentTicker.name, (newPrice) =>
+        this.updareTicker(currentTicker.name, newPrice)
+      );
       // }
     },
 
@@ -525,7 +525,7 @@ export default {
       if (this.selectedTicker === tickerToRemove) {
         this.selectedTicker = null;
       }
-      unsubscribeToTicker(tickerToRemove.name)
+      unsubscribeToTicker(tickerToRemove.name);
     },
 
     setTicker(ticker) {
@@ -557,7 +557,6 @@ export default {
           return elementA.Symbol.length - elementB.Symbol.length;
         });
     },
-    
   },
 };
 </script>
