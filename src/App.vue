@@ -323,6 +323,7 @@
 // [x] График сломан если везде одинаковые значения
 // [x] При удалении тикера остается выбор
 
+
 import { subscribeToTicker, unsubscribeFromTicker } from "./api";
 
 export default {
@@ -514,6 +515,7 @@ export default {
       subscribeToTicker(currentTicker.name, (newPrice) =>
         this.updareTicker(currentTicker.name, newPrice)
       );
+
     },
 
     select(ticker) {
@@ -526,6 +528,7 @@ export default {
         this.selectedTicker = null;
       }
       unsubscribeFromTicker(tickerToRemove.name);
+
     },
 
     setTicker(ticker) {
