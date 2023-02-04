@@ -470,7 +470,7 @@ export default {
         .filter((t) => t.name === tickerName)
         .forEach(t => {
           if (t === this.selectedTicker) {
-            this.grap.push(price);
+            this.graph.push(price);
           }
           t.price = price;
         });
