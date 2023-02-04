@@ -323,7 +323,7 @@
 // [x] График сломан если везде одинаковые значения
 // [x] При удалении тикера остается выбор
 
-import { subscribeToTicker, unsubscribeToTicker } from "./api";
+import { subscribeToTicker, unsubscribeFromTicker } from "./api";
 
 export default {
   name: "App",
@@ -344,6 +344,7 @@ export default {
       hintsList: [],
       page: 1,
       filter: "",
+      fakeTicker: false,
     };
   },
   computed: {
@@ -501,19 +502,18 @@ export default {
       };
 
       this.checkTicker(this.ticker.toUpperCase());
+      this.checkFakeTicker(this.ticker.toUpperCase());
 
-      if (this.present || this.ticker === "") {
+      if (this.present || this.ticker === "" || this.fakeTicker) {
         return;
       }
 
-      // if (!this.apiTickers.includes(currentTicker)) {
       this.tickers = [...this.tickers, currentTicker];
       this.filter = "";
       this.ticker = "";
       subscribeToTicker(currentTicker.name, (newPrice) =>
         this.updareTicker(currentTicker.name, newPrice)
       );
-      // }
     },
 
     select(ticker) {
@@ -525,7 +525,7 @@ export default {
       if (this.selectedTicker === tickerToRemove) {
         this.selectedTicker = null;
       }
-      unsubscribeToTicker(tickerToRemove.name);
+      unsubscribeFromTicker(tickerToRemove.name);
     },
 
     setTicker(ticker) {
@@ -556,6 +556,15 @@ export default {
         .sort(function (elementA, elementB) {
           return elementA.Symbol.length - elementB.Symbol.length;
         });
+    },
+
+    checkFakeTicker(ticker) {
+      Object.entries(this.apiTickers)
+        .map(([key, value]) => [key, value.Symbol])
+        .flat(2)
+        .includes(ticker)
+        ? (this.fakeTicker = false)
+        : (this.fakeTicker = true);
     },
   },
 };
