@@ -323,7 +323,7 @@
 // [x] График сломан если везде одинаковые значения
 // [x] При удалении тикера остается выбор
 
-import { loadTickers, subscribeToTicker, unsubscribeToTicker } from "./api";
+import { subscribeToTicker, unsubscribeToTicker } from "./api";
 
 export default {
   name: "App",
@@ -468,7 +468,10 @@ export default {
     updareTicker(tickerName, price) {
       this.tickers
         .filter((t) => t.name === tickerName)
-        .forEach((t) => {
+        .forEach(t => {
+          if (t === this.selectedTicker) {
+            this.grap.push(price);
+          }
           t.price = price;
         });
     },
@@ -480,16 +483,16 @@ export default {
       return price > 1 ? price.toFixed(2) : price.toPrecision(2);
     },
 
-    async updateTickers() {
-      // if(!this.tickers.length) {
-      //   return;
-      // }
-      // const exchangeData = await loadTickers(this.tickers.map( t => t.name));
-      // this.tickers.forEach(ticker => {
-      //   const price = exchangeData[ticker.name.toUpperCase()]
-      //   ticker.price = price ?? "-"
-      // });
-    },
+    // async updateTickers() {
+    //   // if(!this.tickers.length) {
+    //   //   return;
+    //   // }
+    //   // const exchangeData = await loadTickers(this.tickers.map( t => t.name));
+    //   // this.tickers.forEach(ticker => {
+    //   //   const price = exchangeData[ticker.name.toUpperCase()]
+    //   //   ticker.price = price ?? "-"
+    //   // });
+    // },
 
     add() {
       const currentTicker = {
@@ -554,6 +557,7 @@ export default {
           return elementA.Symbol.length - elementB.Symbol.length;
         });
     },
+    
   },
 };
 </script>
