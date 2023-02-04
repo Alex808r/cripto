@@ -13,7 +13,18 @@
               <span
                 v-for="ticker in exampleTickers"
                 :key="ticker.id"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                class="
+                  inline-flex
+                  items-center
+                  px-2
+                  m-1
+                  rounded-md
+                  text-xs
+                  font-medium
+                  bg-gray-300
+                  text-gray-800
+                  cursor-pointer
+                "
                 v-on:click="setTicker(ticker.name)"
               >
                 {{ ticker.name }}
@@ -29,21 +40,49 @@
                 id="wallet"
                 type="text"
                 name="wallet"
-                class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
+                class="
+                  block
+                  w-full
+                  pr-10
+                  border-gray-300
+                  text-gray-900
+                  focus:outline-none focus:ring-gray-500 focus:border-gray-500
+                  sm:text-sm
+                  rounded-md
+                "
                 placeholder="Например DOGE"
               />
             </div>
 
             <div class="">
               <div
-                class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
+                class="
+                  flex
+                  bg-white
+                  shadow-md
+                  p-1
+                  rounded-md
+                  shadow-md
+                  flex-wrap
+                "
                 v-if="ticker !== ''"
               >
                 <span
                   v-for="item in apiTickers.splice(0, 4)"
                   :key="item.id"
                   @click="(ticker = item.Symbol), add()"
-                  class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                  class="
+                    inline-flex
+                    items-center
+                    px-2
+                    m-1
+                    rounded-md
+                    text-xs
+                    font-medium
+                    bg-gray-300
+                    text-gray-800
+                    cursor-pointer
+                  "
                 >
                   {{ item.Symbol }}
                 </span>
@@ -57,7 +96,28 @@
         <button
           v-on:click="add"
           type="button"
-          class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          class="
+            my-4
+            inline-flex
+            items-center
+            py-2
+            px-4
+            border border-transparent
+            shadow-sm
+            text-sm
+            leading-4
+            font-medium
+            rounded-full
+            text-white
+            bg-gray-600
+            hover:bg-gray-700
+            transition-colors
+            duration-300
+            focus:outline-none
+            focus:ring-2
+            focus:ring-offset-2
+            focus:ring-gray-500
+          "
         >
           <!-- Heroicon name: solid/mail -->
           <svg
@@ -82,14 +142,58 @@
           <button
             v-if="page > 1"
             @click="page = page - 1"
-            class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            class="
+              my-4
+              mx-2
+              inline-flex
+              items-center
+              py-2
+              px-4
+              border border-transparent
+              shadow-sm
+              text-sm
+              leading-4
+              font-medium
+              rounded-full
+              text-white
+              bg-gray-600
+              hover:bg-gray-700
+              transition-colors
+              duration-300
+              focus:outline-none
+              focus:ring-2
+              focus:ring-offset-2
+              focus:ring-gray-500
+            "
           >
             Назад
           </button>
           <button
             v-if="hasNextPage"
             @click="page = page + 1"
-            class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            class="
+              my-4
+              mx-2
+              inline-flex
+              items-center
+              py-2
+              px-4
+              border border-transparent
+              shadow-sm
+              text-sm
+              leading-4
+              font-medium
+              rounded-full
+              text-white
+              bg-gray-600
+              hover:bg-gray-700
+              transition-colors
+              duration-300
+              focus:outline-none
+              focus:ring-2
+              focus:ring-offset-2
+              focus:ring-gray-500
+            "
           >
             Вперед
           </button>
@@ -104,20 +208,41 @@
             v-bind:key="t.name"
             @click="select(t)"
             :class="{ 'border-4': selectedTicker === t }"
-            class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
+            class="
+              bg-white
+              overflow-hidden
+              shadow
+              rounded-lg
+              border-purple-800 border-solid
+              cursor-pointer
+            "
           >
             <div class="px-4 py-5 sm:p-6 text-center">
               <dt class="text-sm font-medium text-gray-500 truncate">
                 {{ t.name }} - USD
               </dt>
               <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                {{ t.price }}
+                {{ formatPrice(t.price) }}
               </dd>
             </div>
             <div class="w-full border-t border-gray-200"></div>
             <button
               @click.stop="handleDelete(t)"
-              class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
+              class="
+                flex
+                items-center
+                justify-center
+                font-medium
+                w-full
+                bg-gray-100
+                px-4
+                py-4
+                sm:px-6
+                text-md text-gray-500
+                hover:text-gray-600 hover:bg-gray-200 hover:opacity-20
+                transition-all
+                focus:outline-none
+              "
             >
               <svg
                 class="h-5 w-5"
@@ -197,6 +322,8 @@
 // Параллельно
 // [x] График сломан если везде одинаковые значения
 // [x] При удалении тикера остается выбор
+
+import { subscribeToTicker, unsubscribeToTicker } from "./api";
 
 export default {
   name: "App",
@@ -281,7 +408,7 @@ export default {
 
     tickers(newValue, oldValue) {
       // Почему не сработал watch при добавлении?
-      console.log(newValue === oldValue);
+      // console.log(newValue, oldValue);
       localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
     },
 
@@ -328,11 +455,45 @@ export default {
     if (tickersData) {
       this.tickers = JSON.parse(tickersData);
       this.tickers.forEach((ticker) => {
-        this.subscribeToUpdates(ticker.name);
+        subscribeToTicker(ticker.name, (newPrice) =>
+          this.updareTicker(ticker.name, newPrice)
+        );
       });
     }
+
+    // setInterval(this.updateTickers, 500000);
   },
+
   methods: {
+    updareTicker(tickerName, price) {
+      this.tickers
+        .filter((t) => t.name === tickerName)
+        .forEach((t) => {
+          if (t === this.selectedTicker) {
+            this.graph.push(price);
+          }
+          t.price = price;
+        });
+    },
+
+    formatPrice(price) {
+      if (price === "-") {
+        return price;
+      }
+      return price > 1 ? price.toFixed(2) : price.toPrecision(2);
+    },
+
+    // async updateTickers() {
+    //   // if(!this.tickers.length) {
+    //   //   return;
+    //   // }
+    //   // const exchangeData = await loadTickers(this.tickers.map( t => t.name));
+    //   // this.tickers.forEach(ticker => {
+    //   //   const price = exchangeData[ticker.name.toUpperCase()]
+    //   //   ticker.price = price ?? "-"
+    //   // });
+    // },
+
     add() {
       const currentTicker = {
         name: this.ticker,
@@ -345,42 +506,26 @@ export default {
         return;
       }
 
-      if (!this.apiTickers.includes(currentTicker)) {
-        this.tickers = [...this.tickers, currentTicker];
-
-        this.filter = "";
-      }
-
-      this.subscribeToUpdates(currentTicker.name);
-    },
-
-    subscribeToUpdates(tickerName) {
-      setInterval(async () => {
-        const f = await fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=${tickerName}&tsyms=USD&api_key=${process.env.VUE_APP_API_KEY}`
-        );
-
-        const data = await f.json();
-
-        // currentTicker.price =  data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
-        this.tickers.find((t) => t.name === tickerName).price =
-          data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
-
-        if (this.selectedTicker?.name === tickerName) {
-          this.graph.push(data.USD);
-        }
-        // currentTicker.price = data.USD; don't work
-      }, 5000);
+      // if (!this.apiTickers.includes(currentTicker)) {
+      this.tickers = [...this.tickers, currentTicker];
+      this.filter = "";
       this.ticker = "";
+      subscribeToTicker(currentTicker.name, (newPrice) =>
+        this.updareTicker(currentTicker.name, newPrice)
+      );
+      // }
     },
+
     select(ticker) {
       this.selectedTicker = ticker;
     },
+
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter((t) => t !== tickerToRemove);
       if (this.selectedTicker === tickerToRemove) {
         this.selectedTicker = null;
       }
+      unsubscribeToTicker(tickerToRemove.name);
     },
 
     setTicker(ticker) {
