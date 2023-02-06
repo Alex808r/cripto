@@ -420,8 +420,9 @@ export default {
 
     selectedTicker() {
       this.graph = [];
+
+      this.$nextTick().then(this.calculateMaxGraphElements);
     },
-  },
 
   mounted() {
     window.addEventListener("resize", this.calculateMaxGraphElements)
