@@ -1,13 +1,13 @@
 <template>
   <div class="container mx-auto flex flex-col items-center bg-gray-100 p-4">
     <div class="container">
-      <add-ticker 
-      @add-ticker="add" 
-      :disabled="tooManyTickersAdded" 
-      :present="present" 
-      :fake-ticker="fakeTicker" 
-      @check-ticker="checkTicker"
-      :api-tickers="apiTickers"
+      <add-ticker
+        @add-ticker="add"
+        :disabled="tooManyTickersAdded"
+        :present="present"
+        :fake-ticker="fakeTicker"
+        @check-ticker="checkTicker"
+        :api-tickers="apiTickers"
       />
 
       <template v-if="tickers.length">
@@ -453,7 +453,6 @@ export default {
         this.hintsList = [];
       }
     },
-    
 
     checkFakeTicker(ticker) {
       this.fakeTicker = false;
