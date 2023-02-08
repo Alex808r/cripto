@@ -1,140 +1,14 @@
 <template>
   <div class="container mx-auto flex flex-col items-center bg-gray-100 p-4">
     <div class="container">
-      <section>
-        <div class="flex">
-          <div class="max-w-xs">
-            <label for="wallet" class="block text-sm font-medium text-gray-700">
-              Тикер
-            </label>
-            <div
-              class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
-            >
-              <span
-                v-for="ticker in exampleTickers"
-                :key="ticker.id"
-                class="
-                  inline-flex
-                  items-center
-                  px-2
-                  m-1
-                  rounded-md
-                  text-xs
-                  font-medium
-                  bg-gray-300
-                  text-gray-800
-                  cursor-pointer
-                "
-                v-on:click="setTicker(ticker.name)"
-              >
-                {{ ticker.name }}
-              </span>
-            </div>
-
-            <div class="mt-1 relative rounded-md shadow-md">
-              <input
-                v-model="ticker"
-                v-on:keydown.enter="add"
-                v-on:input="checkTicker(ticker)"
-                v-on:change="hints()"
-                id="wallet"
-                type="text"
-                name="wallet"
-                class="
-                  block
-                  w-full
-                  pr-10
-                  border-gray-300
-                  text-gray-900
-                  focus:outline-none focus:ring-gray-500 focus:border-gray-500
-                  sm:text-sm
-                  rounded-md
-                "
-                placeholder="Например DOGE"
-              />
-            </div>
-
-            <div class="">
-              <div
-                class="
-                  flex
-                  bg-white
-                  shadow-md
-                  p-1
-                  rounded-md
-                  shadow-md
-                  flex-wrap
-                "
-                v-if="ticker !== ''"
-              >
-                <span
-                  v-for="item in apiTickers.splice(0, 4)"
-                  :key="item.id"
-                  @click="(ticker = item.Symbol), add()"
-                  class="
-                    inline-flex
-                    items-center
-                    px-2
-                    m-1
-                    rounded-md
-                    text-xs
-                    font-medium
-                    bg-gray-300
-                    text-gray-800
-                    cursor-pointer
-                  "
-                >
-                  {{ item.Symbol }}
-                </span>
-              </div>
-            </div>
-            <div v-if="present" class="text-sm text-red-600">
-              Такой тикер уже добавлен {{ this.ticker }}
-            </div>
-          </div>
-        </div>
-        <button
-          v-on:click="add"
-          type="button"
-          class="
-            my-4
-            inline-flex
-            items-center
-            py-2
-            px-4
-            border border-transparent
-            shadow-sm
-            text-sm
-            leading-4
-            font-medium
-            rounded-full
-            text-white
-            bg-gray-600
-            hover:bg-gray-700
-            transition-colors
-            duration-300
-            focus:outline-none
-            focus:ring-2
-            focus:ring-offset-2
-            focus:ring-gray-500
-          "
-        >
-          <!-- Heroicon name: solid/mail -->
-          <svg
-            class="-ml-0.5 mr-2 h-6 w-6"
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="#ffffff"
-          >
-            <path
-              d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-            ></path>
-          </svg>
-          Добавить
-        </button>
-      </section>
+      <add-ticker 
+      @add-ticker="add" 
+      :disabled="tooManyTickersAdded" 
+      :present="present" 
+      :fake-ticker="fakeTicker" 
+      @check-ticker="checkTicker"
+      :api-tickers="apiTickers"
+      />
 
       <template v-if="tickers.length">
         <hr class="w-full border-t border-gray-600 my-4" />
@@ -326,21 +200,20 @@
 // [x] График сломан если везде одинаковые значения
 // [x] При удалении тикера остается выбор
 
-
 import { subscribeToTicker, unsubscribeFromTicker } from "./api";
+import AddTicker from "./components/AddTicker.vue";
 
 export default {
   name: "App",
+
+  components: {
+    AddTicker,
+  },
+
   data() {
     return {
       ticker: "",
       tickers: [],
-      exampleTickers: [
-        { name: "BTC", id: 1 },
-        { name: "DOGE", id: 2 },
-        { name: "BCH", id: 3 },
-        { name: "CHD", id: 4 },
-      ],
       selectedTicker: null,
       graph: [],
       present: false,
@@ -352,7 +225,12 @@ export default {
       maxGraphElements: 1,
     };
   },
+
   computed: {
+    tooManyTickersAdded() {
+      return this.tickers.length > 1;
+    },
+
     startIndex() {
       return (this.page - 1) * 6;
     },
@@ -422,15 +300,15 @@ export default {
       this.graph = [];
 
       this.$nextTick().then(this.calculateMaxGraphElements);
-    }
+    },
   },
 
   mounted() {
-    window.addEventListener("resize", this.calculateMaxGraphElements)
+    window.addEventListener("resize", this.calculateMaxGraphElements);
   },
 
   beforeUnmount() {
-    window.removeEventListener("resize", this.calculateMaxGraphElements)
+    window.removeEventListener("resize", this.calculateMaxGraphElements);
   },
 
   created() {
@@ -522,22 +400,21 @@ export default {
     //   // });
     // },
 
-    add() {
+    add(ticker) {
       const currentTicker = {
-        name: this.ticker,
+        name: ticker,
         price: "-",
       };
 
-      this.checkTicker(this.ticker.toUpperCase());
-      this.checkFakeTicker(this.ticker.toUpperCase());
+      this.checkTicker(ticker.toUpperCase());
+      this.checkFakeTicker(ticker.toUpperCase());
 
-      if (this.present || this.ticker === "" || this.fakeTicker) {
+      if (this.present || this.fakeTicker) {
         return;
       }
 
       this.tickers = [...this.tickers, currentTicker];
       this.filter = "";
-      this.ticker = "";
       subscribeToTicker(currentTicker.name, (newPrice) =>
         this.updareTicker(currentTicker.name, newPrice)
       );
@@ -560,6 +437,7 @@ export default {
     },
 
     checkTicker(nameTicker) {
+      this.checkFakeTicker(nameTicker);
       this.present = false;
       this.tickers.find((item) =>
         item.name === nameTicker
@@ -575,17 +453,10 @@ export default {
         this.hintsList = [];
       }
     },
-    filterItems(query) {
-      return this.apiTickers
-        .filter(function (el) {
-          return el.Symbol.toLowerCase().indexOf(query.toLowerCase()) > -1;
-        })
-        .sort(function (elementA, elementB) {
-          return elementA.Symbol.length - elementB.Symbol.length;
-        });
-    },
+    
 
     checkFakeTicker(ticker) {
+      this.fakeTicker = false;
       Object.entries(this.apiTickers)
         .map(([key, value]) => [key, value.Symbol])
         .flat(2)
