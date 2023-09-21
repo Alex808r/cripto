@@ -1,140 +1,14 @@
 <template>
   <div class="container mx-auto flex flex-col items-center bg-gray-100 p-4">
     <div class="container">
-      <section>
-        <div class="flex">
-          <div class="max-w-xs">
-            <label for="wallet" class="block text-sm font-medium text-gray-700">
-              Тикер
-            </label>
-            <div
-              class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
-            >
-              <span
-                v-for="ticker in exampleTickers"
-                :key="ticker.id"
-                class="
-                  inline-flex
-                  items-center
-                  px-2
-                  m-1
-                  rounded-md
-                  text-xs
-                  font-medium
-                  bg-gray-300
-                  text-gray-800
-                  cursor-pointer
-                "
-                v-on:click="setTicker(ticker.name)"
-              >
-                {{ ticker.name }}
-              </span>
-            </div>
-
-            <div class="mt-1 relative rounded-md shadow-md">
-              <input
-                v-model="ticker"
-                v-on:keydown.enter="add"
-                v-on:input="checkTicker(ticker)"
-                v-on:change="hints()"
-                id="wallet"
-                type="text"
-                name="wallet"
-                class="
-                  block
-                  w-full
-                  pr-10
-                  border-gray-300
-                  text-gray-900
-                  focus:outline-none focus:ring-gray-500 focus:border-gray-500
-                  sm:text-sm
-                  rounded-md
-                "
-                placeholder="Например DOGE"
-              />
-            </div>
-
-            <div class="">
-              <div
-                class="
-                  flex
-                  bg-white
-                  shadow-md
-                  p-1
-                  rounded-md
-                  shadow-md
-                  flex-wrap
-                "
-                v-if="ticker !== ''"
-              >
-                <span
-                  v-for="item in apiTickers.splice(0, 4)"
-                  :key="item.id"
-                  @click="(ticker = item.Symbol), add()"
-                  class="
-                    inline-flex
-                    items-center
-                    px-2
-                    m-1
-                    rounded-md
-                    text-xs
-                    font-medium
-                    bg-gray-300
-                    text-gray-800
-                    cursor-pointer
-                  "
-                >
-                  {{ item.Symbol }}
-                </span>
-              </div>
-            </div>
-            <div v-if="present" class="text-sm text-red-600">
-              Такой тикер уже добавлен {{ this.ticker }}
-            </div>
-          </div>
-        </div>
-        <button
-          v-on:click="add"
-          type="button"
-          class="
-            my-4
-            inline-flex
-            items-center
-            py-2
-            px-4
-            border border-transparent
-            shadow-sm
-            text-sm
-            leading-4
-            font-medium
-            rounded-full
-            text-white
-            bg-gray-600
-            hover:bg-gray-700
-            transition-colors
-            duration-300
-            focus:outline-none
-            focus:ring-2
-            focus:ring-offset-2
-            focus:ring-gray-500
-          "
-        >
-          <!-- Heroicon name: solid/mail -->
-          <svg
-            class="-ml-0.5 mr-2 h-6 w-6"
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="#ffffff"
-          >
-            <path
-              d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-            ></path>
-          </svg>
-          Добавить
-        </button>
-      </section>
+      <add-ticker
+        @add-ticker="add"
+        :disabled="tooManyTickersAdded"
+        :present="present"
+        :fake-ticker="fakeTicker"
+        @check-ticker="checkTicker"
+        :api-tickers="apiTickers"
+      />
 
       <template v-if="tickers.length">
         <hr class="w-full border-t border-gray-600 my-4" />
@@ -142,58 +16,14 @@
           <button
             v-if="page > 1"
             @click="page = page - 1"
-            class="
-              my-4
-              mx-2
-              inline-flex
-              items-center
-              py-2
-              px-4
-              border border-transparent
-              shadow-sm
-              text-sm
-              leading-4
-              font-medium
-              rounded-full
-              text-white
-              bg-gray-600
-              hover:bg-gray-700
-              transition-colors
-              duration-300
-              focus:outline-none
-              focus:ring-2
-              focus:ring-offset-2
-              focus:ring-gray-500
-            "
+            class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Назад
           </button>
           <button
             v-if="hasNextPage"
             @click="page = page + 1"
-            class="
-              my-4
-              mx-2
-              inline-flex
-              items-center
-              py-2
-              px-4
-              border border-transparent
-              shadow-sm
-              text-sm
-              leading-4
-              font-medium
-              rounded-full
-              text-white
-              bg-gray-600
-              hover:bg-gray-700
-              transition-colors
-              duration-300
-              focus:outline-none
-              focus:ring-2
-              focus:ring-offset-2
-              focus:ring-gray-500
-            "
+            class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Вперед
           </button>
@@ -208,14 +38,7 @@
             v-bind:key="t.name"
             @click="select(t)"
             :class="{ 'border-4': selectedTicker === t }"
-            class="
-              bg-white
-              overflow-hidden
-              shadow
-              rounded-lg
-              border-purple-800 border-solid
-              cursor-pointer
-            "
+            class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
           >
             <div class="px-4 py-5 sm:p-6 text-center">
               <dt class="text-sm font-medium text-gray-500 truncate">
@@ -228,21 +51,7 @@
             <div class="w-full border-t border-gray-200"></div>
             <button
               @click.stop="handleDelete(t)"
-              class="
-                flex
-                items-center
-                justify-center
-                font-medium
-                w-full
-                bg-gray-100
-                px-4
-                py-4
-                sm:px-6
-                text-md text-gray-500
-                hover:text-gray-600 hover:bg-gray-200 hover:opacity-20
-                transition-all
-                focus:outline-none
-              "
+              class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
             >
               <svg
                 class="h-5 w-5"
@@ -262,50 +71,12 @@
         </dl>
         <hr class="w-full border-t border-gray-600 my-4" />
       </template>
-
-      <section v-if="selectedTicker" class="relative">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
-          {{ selectedTicker.name }} - USD
-        </h3>
-        <div
-          ref="graph"
-          class="flex items-end border-gray-600 border-b border-l h-64"
-        >
-          <div
-            v-for="(bar, idx) in normalizedGraph"
-            :key="idx"
-            :style="{ height: `${bar}%` }"
-            class="bg-purple-800 border w-10"
-          ></div>
-        </div>
-        <button
-          @:click="selectedTicker = null"
-          type="button"
-          class="absolute top-0 right-0"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            xmlns:svgjs="http://svgjs.com/svgjs"
-            version="1.1"
-            width="30"
-            height="30"
-            x="0"
-            y="0"
-            viewBox="0 0 511.76 511.76"
-            style="enable-background: new 0 0 512 512"
-            xml:space="preserve"
-          >
-            <g>
-              <path
-                d="M436.896,74.869c-99.84-99.819-262.208-99.819-362.048,0c-99.797,99.819-99.797,262.229,0,362.048    c49.92,49.899,115.477,74.837,181.035,74.837s131.093-24.939,181.013-74.837C536.715,337.099,536.715,174.688,436.896,74.869z     M361.461,331.317c8.341,8.341,8.341,21.824,0,30.165c-4.16,4.16-9.621,6.251-15.083,6.251c-5.461,0-10.923-2.091-15.083-6.251    l-75.413-75.435l-75.392,75.413c-4.181,4.16-9.643,6.251-15.083,6.251c-5.461,0-10.923-2.091-15.083-6.251    c-8.341-8.341-8.341-21.845,0-30.165l75.392-75.413l-75.413-75.413c-8.341-8.341-8.341-21.845,0-30.165    c8.32-8.341,21.824-8.341,30.165,0l75.413,75.413l75.413-75.413c8.341-8.341,21.824-8.341,30.165,0    c8.341,8.32,8.341,21.824,0,30.165l-75.413,75.413L361.461,331.317z"
-                fill="#718096"
-                data-original="#000000"
-              ></path>
-            </g>
-          </svg>
-        </button>
-      </section>
+      <add-graph
+        :selected-ticker="selectedTicker"
+        :normalizedGraph="normalizedGraph"
+        :graph="graph"
+        @close-graph="selectedTicker = null"
+      />
     </div>
   </div>
 </template>
@@ -326,21 +97,22 @@
 // [x] График сломан если везде одинаковые значения
 // [x] При удалении тикера остается выбор
 
-
 import { subscribeToTicker, unsubscribeFromTicker } from "./api";
+import AddTicker from "./components/AddTicker.vue";
+import AddGraph from "./components/AddGraph.vue";
 
 export default {
   name: "App",
+
+  components: {
+    AddTicker,
+    AddGraph,
+  },
+
   data() {
     return {
-      ticker: "",
+      // ticker: "", более не используется так как вынесено в компонент AddTicker
       tickers: [],
-      exampleTickers: [
-        { name: "BTC", id: 1 },
-        { name: "DOGE", id: 2 },
-        { name: "BCH", id: 3 },
-        { name: "CHD", id: 4 },
-      ],
       selectedTicker: null,
       graph: [],
       present: false,
@@ -352,7 +124,12 @@ export default {
       maxGraphElements: 1,
     };
   },
+
   computed: {
+    tooManyTickersAdded() {
+      return this.tickers.length > 2; 
+    },
+
     startIndex() {
       return (this.page - 1) * 6;
     },
@@ -422,15 +199,15 @@ export default {
       this.graph = [];
 
       this.$nextTick().then(this.calculateMaxGraphElements);
-    }
+    },
   },
 
   mounted() {
-    window.addEventListener("resize", this.calculateMaxGraphElements)
+    window.addEventListener("resize", this.calculateMaxGraphElements);
   },
 
   beforeUnmount() {
-    window.removeEventListener("resize", this.calculateMaxGraphElements)
+    window.removeEventListener("resize", this.calculateMaxGraphElements);
   },
 
   created() {
@@ -472,7 +249,7 @@ export default {
       this.tickers = JSON.parse(tickersData);
       this.tickers.forEach((ticker) => {
         subscribeToTicker(ticker.name, (newPrice) =>
-          this.updareTicker(ticker.name, newPrice)
+          this.updateTicker(ticker.name, newPrice)
         );
       });
     }
@@ -489,7 +266,7 @@ export default {
       this.maxGraphElements = this.$refs.graph.clientWidth / 38;
     },
 
-    updareTicker(tickerName, price) {
+    updateTicker(tickerName, price) {
       // console.log('123', this.$refs.graph)
       this.tickers
         .filter((t) => t.name === tickerName)
@@ -522,24 +299,23 @@ export default {
     //   // });
     // },
 
-    add() {
+    add(ticker) {
       const currentTicker = {
-        name: this.ticker,
+        name: ticker,
         price: "-",
       };
 
-      this.checkTicker(this.ticker.toUpperCase());
-      this.checkFakeTicker(this.ticker.toUpperCase());
+      this.checkTicker(ticker.toUpperCase());
+      this.checkFakeTicker(ticker.toUpperCase());
 
-      if (this.present || this.ticker === "" || this.fakeTicker) {
+      if (this.present || this.fakeTicker) {
         return;
       }
 
       this.tickers = [...this.tickers, currentTicker];
       this.filter = "";
-      this.ticker = "";
       subscribeToTicker(currentTicker.name, (newPrice) =>
-        this.updareTicker(currentTicker.name, newPrice)
+        this.updateTicker(currentTicker.name, newPrice)
       );
     },
 
@@ -560,6 +336,7 @@ export default {
     },
 
     checkTicker(nameTicker) {
+      this.checkFakeTicker(nameTicker);
       this.present = false;
       this.tickers.find((item) =>
         item.name === nameTicker
@@ -575,17 +352,9 @@ export default {
         this.hintsList = [];
       }
     },
-    filterItems(query) {
-      return this.apiTickers
-        .filter(function (el) {
-          return el.Symbol.toLowerCase().indexOf(query.toLowerCase()) > -1;
-        })
-        .sort(function (elementA, elementB) {
-          return elementA.Symbol.length - elementB.Symbol.length;
-        });
-    },
 
     checkFakeTicker(ticker) {
+      this.fakeTicker = false;
       Object.entries(this.apiTickers)
         .map(([key, value]) => [key, value.Symbol])
         .flat(2)
