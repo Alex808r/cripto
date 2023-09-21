@@ -9,18 +9,7 @@
           <span
             v-for="ticker in exampleTickers"
             :key="ticker.id"
-            class="
-              inline-flex
-              items-center
-              px-2
-              m-1
-              rounded-md
-              text-xs
-              font-medium
-              bg-gray-300
-              text-gray-800
-              cursor-pointer
-            "
+            class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
             @:click="setTicker(ticker.name)"
             @input="checkTicker(ticker.name)"
           >
@@ -33,21 +22,11 @@
             v-model="ticker"
             @:click="setTicker(ticker)"
             @input="checkTicker(ticker)"
-          
             @keydown.enter="add"
             id="wallet"
             type="text"
             name="wallet"
-            class="
-              block
-              w-full
-              pr-10
-              border-gray-300
-              text-gray-900
-              focus:outline-none focus:ring-gray-500 focus:border-gray-500
-              sm:text-sm
-              rounded-md
-            "
+            class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
             placeholder="Например DOGE"
           />
         </div>
@@ -61,37 +40,19 @@
               v-for="item in apiTickers.splice(0, 4)"
               :key="item.id"
               @click="(ticker = item.Symbol), add()"
-              class="
-                inline-flex
-                items-center
-                px-2
-                m-1
-                rounded-md
-                text-xs
-                font-medium
-                bg-gray-300
-                text-gray-800
-                cursor-pointer
-              "
+              class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
             >
               {{ item.Symbol }}
             </span>
           </div>
         </div>
-        <div
-          v-if="present"
-          class="text-sm text-red-600"
-        >
+        <div v-if="present" class="text-sm text-red-600">
           Такой тикер уже добавлен {{ this.ticker }}
         </div>
 
-         <div
-          v-if="fakeTicker"
-          class="text-sm text-red-600"
-        >
+        <div v-if="fakeTicker" class="text-sm text-red-600">
           Такого тикера не существует {{ this.ticker }}
         </div>
-
       </div>
     </div>
     <add-button @click="add" type="button" class="my-4" :disabled="disabled">
@@ -129,7 +90,7 @@ export default {
     apiTickers: {
       type: Object,
       required: false,
-    }
+    },
   },
 
   emits: {

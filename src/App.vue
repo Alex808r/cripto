@@ -16,58 +16,14 @@
           <button
             v-if="page > 1"
             @click="page = page - 1"
-            class="
-              my-4
-              mx-2
-              inline-flex
-              items-center
-              py-2
-              px-4
-              border border-transparent
-              shadow-sm
-              text-sm
-              leading-4
-              font-medium
-              rounded-full
-              text-white
-              bg-gray-600
-              hover:bg-gray-700
-              transition-colors
-              duration-300
-              focus:outline-none
-              focus:ring-2
-              focus:ring-offset-2
-              focus:ring-gray-500
-            "
+            class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Назад
           </button>
           <button
             v-if="hasNextPage"
             @click="page = page + 1"
-            class="
-              my-4
-              mx-2
-              inline-flex
-              items-center
-              py-2
-              px-4
-              border border-transparent
-              shadow-sm
-              text-sm
-              leading-4
-              font-medium
-              rounded-full
-              text-white
-              bg-gray-600
-              hover:bg-gray-700
-              transition-colors
-              duration-300
-              focus:outline-none
-              focus:ring-2
-              focus:ring-offset-2
-              focus:ring-gray-500
-            "
+            class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Вперед
           </button>
@@ -82,14 +38,7 @@
             v-bind:key="t.name"
             @click="select(t)"
             :class="{ 'border-4': selectedTicker === t }"
-            class="
-              bg-white
-              overflow-hidden
-              shadow
-              rounded-lg
-              border-purple-800 border-solid
-              cursor-pointer
-            "
+            class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
           >
             <div class="px-4 py-5 sm:p-6 text-center">
               <dt class="text-sm font-medium text-gray-500 truncate">
@@ -102,21 +51,7 @@
             <div class="w-full border-t border-gray-200"></div>
             <button
               @click.stop="handleDelete(t)"
-              class="
-                flex
-                items-center
-                justify-center
-                font-medium
-                w-full
-                bg-gray-100
-                px-4
-                py-4
-                sm:px-6
-                text-md text-gray-500
-                hover:text-gray-600 hover:bg-gray-200 hover:opacity-20
-                transition-all
-                focus:outline-none
-              "
+              class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
             >
               <svg
                 class="h-5 w-5"
@@ -142,7 +77,6 @@
         :graph="graph"
         @close-graph="selectedTicker = null"
       />
-
     </div>
   </div>
 </template>
