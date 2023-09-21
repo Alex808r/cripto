@@ -111,7 +111,7 @@ export default {
 
   data() {
     return {
-      ticker: "",
+      // ticker: "", более не используется так как вынесено в компонент AddTicker
       tickers: [],
       selectedTicker: null,
       graph: [],
@@ -127,7 +127,7 @@ export default {
 
   computed: {
     tooManyTickersAdded() {
-      return this.tickers.length > 1;
+      return this.tickers.length > 2; 
     },
 
     startIndex() {
